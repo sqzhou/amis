@@ -2,7 +2,7 @@
  * @file 公式编辑器
  */
 import React from 'react';
-import {uncontrollable} from 'uncontrollable';
+import {uncontrollable} from 'amis-core';
 import {
   parse,
   autobind,
@@ -13,7 +13,7 @@ import {
   LocaleProps,
   eachTree
 } from 'amis-core';
-import {doc} from 'amis-formula/dist/doc';
+import {doc} from 'amis-formula/lib/doc';
 
 import {FormulaPlugin, editorFactory} from './plugin';
 import FuncList from './FuncList';
@@ -239,7 +239,7 @@ export class FormulaEditor extends React.Component<
   handleVariableSelect(item: VariableItem) {
     const {evalMode, selfVariableName} = this.props;
 
-    if (item && item.value && selfVariableName === item.value) {
+    if (item && item.value && (selfVariableName && selfVariableName === item.value)) {
       toast.warning('不能使用当前变量[self]，避免循环引用。');
       return;
     }

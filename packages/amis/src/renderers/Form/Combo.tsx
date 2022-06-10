@@ -26,6 +26,7 @@ import memoize from 'lodash/memoize';
 import {Icon} from 'amis-ui';
 import {isAlive} from 'mobx-state-tree';
 import {
+  FormBaseControlSchema,
   SchemaApi,
   SchemaClassName,
   SchemaObject,
@@ -57,7 +58,7 @@ export type ComboSubControl = SchemaObject & {
  * Combo 组合输入框类型
  * 文档：https://baidu.gitee.io/amis/docs/components/form/combo
  */
-export interface ComboControlSchema extends FormBaseControl {
+export interface ComboControlSchema extends FormBaseControlSchema {
   /**
    * 指定为组合输入框类型
    */
@@ -1590,7 +1591,23 @@ export default class ComboControl extends React.Component<ComboProps> {
   storeType: ComboStore.name,
   extendsData: false
 })
-export class ComboControlRenderer extends ComboControl {}
+export class ComboControlRenderer extends ComboControl {
+  // 支持更新指定索引的值
+  setData(value: any, index?: number) {
+    const {multiple, onChange, submitOnChange} = this.props;
+    if (multiple) {
+      if (index !== undefined && ~index) {
+        let newValue = [...this.getValueAsArray()];
+        newValue.splice(index, 1, {...newValue[index], ...value});
+        onChange?.(newValue, submitOnChange, true);
+      } else {
+        onChange?.(value, submitOnChange, true);
+      }
+    } else {
+      onChange?.(value, submitOnChange, true);
+    }
+  }
+}
 
 @FormItem({
   type: 'input-kv',

@@ -1,7 +1,14 @@
+/** @license amis v@version
+ *
+ * Copyright Baidu
+ *
+ * This source code is licensed under the Apache license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 export * from 'amis-core';
 export * from 'amis-ui';
-import './compat';
-import './schemaExtend';
+
+import './preset';
 
 // 注册渲染器
 import './renderers/Action';
@@ -136,3 +143,7 @@ import './renderers/GridNav';
 import './renderers/TooltipWrapper';
 import './renderers/Tag';
 import './renderers/Table-v2/index';
+
+import './compat';
+import './schemaExtend';
+export * from './renderers/Form/IconPickerIcons';

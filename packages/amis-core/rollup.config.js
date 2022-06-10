@@ -15,6 +15,8 @@ import {
 } from './package.json';
 import path from 'path';
 
+const isDev = process.env.NODE_ENV !== 'production';
+
 const settings = {
   globals: {}
 };
@@ -55,23 +57,25 @@ export default [
     plugins: getPlugins('cjs')
   },
 
-  {
-    input,
+  isDev
+    ? null
+    : {
+        input,
 
-    output: [
-      {
-        ...settings,
-        dir: path.dirname(module),
-        format: 'esm',
-        exports: 'named',
-        preserveModulesRoot: './src',
-        preserveModules: true // Keep directory structure and files
+        output: [
+          {
+            ...settings,
+            dir: path.dirname(module),
+            format: 'esm',
+            exports: 'named',
+            preserveModulesRoot: './src',
+            preserveModules: true // Keep directory structure and files
+          }
+        ],
+        external,
+        plugins: getPlugins('esm')
       }
-    ],
-    external,
-    plugins: getPlugins('esm')
-  }
-];
+].filter(item => item);
 
 function transpileDynamicImportForCJS(options) {
   return {
@@ -82,12 +86,18 @@ function transpileDynamicImportForCJS(options) {
       }
 
       return {
-        left: 'Promise.resolve().then(function() {return new Promise(function(fullfill) {require.ensure([',
+        left: 'Promise.resolve().then(function() {return new Promise(function(fullfill) {require([',
         right:
-          '], function(r) {fullfill(_interopDefaultLegacy(r("' +
-          targetModuleId +
-          '")))})})})'
+          '], function(mod) {fullfill(tslib.__importStar(mod))})})})'
       };
+
+      // return {
+      //   left: 'Promise.resolve().then(function() {return new Promise(function(fullfill) {require.ensure([',
+      //   right:
+      //     '], function(r) {fullfill(_interopDefaultLegacy(r("' +
+      //     targetModuleId +
+      //     '")))})})})'
+      // };
     }
   };
 }

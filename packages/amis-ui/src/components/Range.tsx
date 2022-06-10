@@ -9,7 +9,7 @@ import keys from 'lodash/keys';
 import isString from 'lodash/isString';
 import difference from 'lodash/difference';
 import React from 'react';
-import {uncontrollable} from 'uncontrollable';
+import {uncontrollable} from 'amis-core';
 
 import Overlay from './Overlay';
 import type {ThemeProps} from 'amis-core';
@@ -539,13 +539,20 @@ export class Range extends React.Component<RangeItemProps, any> {
           {/* 刻度标记 */}
           {marks && (
             <div className={cx('InputRange-marks')}>
-              {keys(marks).map((key: keyof MarksType) => (
-                <div key={key} style={{left: this.getOffsetLeft(key)}}>
-                  <span style={(marks[key] as any)?.style}>
-                    {(marks[key] as any)?.label || marks[key]}
-                  </span>
-                </div>
-              ))}
+              {keys(marks).map((key: keyof MarksType) => {
+                const offsetLeft = this.getOffsetLeft(key);
+                if (/^\d+%$/.test(offsetLeft)) {
+                  return (
+                    <div key={key} style={{left: offsetLeft}}>
+                      <span style={(marks[key] as any)?.style}>
+                        {(marks[key] as any)?.label || marks[key]}
+                      </span>
+                    </div>
+                  )
+                } else {
+                  return null;
+                }
+              })}
             </div>
           )}
         </div>

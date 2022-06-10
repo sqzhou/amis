@@ -26,7 +26,6 @@ export * from './isPureVariable';
 export * from './json-schema-2-amis-schema';
 export * from './keyToPath';
 export * from './makeSorter';
-export * from './markdown';
 export * from './normalizeLink';
 export * from './normalizeOptions';
 export * from './object';
@@ -48,9 +47,9 @@ export * from './style';
 export * from './tokenize';
 export * from './tpl-builtin';
 export * from './tpl';
+export * from './uncontrollable';
 export * from './validations';
 
 import animation from './Animation';
-import markdownRender from './markdown';
 
-export {animation, markdownRender};
+export {animation};
