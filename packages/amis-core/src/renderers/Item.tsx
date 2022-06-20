@@ -53,6 +53,11 @@ export interface FormBaseControl extends BaseSchemaWithoutType {
   labelAlign?: LabelAlign;
 
   /**
+   * label自定义宽度，默认单位为px
+   */
+  labelWidth?: number | string;
+
+  /**
    * 配置 label className
    */
   labelClassName?: string;
@@ -296,6 +301,10 @@ export interface FormItemBasicConfig extends Partial<RendererConfig> {
   storeType?: string;
   validations?: string;
   strictMode?: boolean;
+  /**
+   * schema变化使视图更新的属性白名单
+   */
+  detectProps?: Array<string>;
   shouldComponentUpdate?: (props: any, prevProps: any) => boolean;
   descriptionClassName?: string;
   storeExtendsData?: boolean;
@@ -317,9 +326,11 @@ export interface FormItemProps extends RendererProps {
   formMode: 'normal' | 'horizontal' | 'inline' | 'row' | 'default';
   formHorizontal: FormHorizontal;
   formLabelAlign: LabelAlign;
+  formLabelWidth?: number | string;
   defaultSize?: 'xs' | 'sm' | 'md' | 'lg' | 'full';
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'full';
   labelAlign?: LabelAlign;
+  labelWidth?: number | string;
   disabled?: boolean;
   btnDisabled: boolean;
   defaultValue: any;
@@ -600,6 +611,7 @@ export class FormItemWrap extends React.Component<FormItemProps> {
       const left = getWidthRate(horizontal.left);
       const right = getWidthRate(horizontal.right);
       const labelAlign = props.labelAlign || props.formLabelAlign;
+      const labelWidth = props.labelWidth || props.formLabelWidth;
 
       return (
         <div
@@ -630,6 +642,7 @@ export class FormItemWrap extends React.Component<FormItemProps> {
                 },
                 labelClassName
               )}
+              style={labelWidth != null ? {width: labelWidth} : undefined}
             >
               <span>
                 {label
@@ -858,7 +871,7 @@ export class FormItemWrap extends React.Component<FormItemProps> {
         showErrorMsg,
         useMobileUI
       } = props;
-
+      const labelWidth = props.labelWidth || props.formLabelWidth;
       description = description || desc;
 
       return (
@@ -875,7 +888,10 @@ export class FormItemWrap extends React.Component<FormItemProps> {
           )}
         >
           {label && renderLabel !== false ? (
-            <label className={cx(`Form-label`, labelClassName)}>
+            <label
+              className={cx(`Form-label`, labelClassName)}
+              style={labelWidth != null ? {width: labelWidth} : undefined}
+            >
               <span>
                 {label
                   ? render(
@@ -979,7 +995,7 @@ export class FormItemWrap extends React.Component<FormItemProps> {
         showErrorMsg,
         useMobileUI
       } = props;
-
+      const labelWidth = props.labelWidth || props.formLabelWidth;
       description = description || desc;
 
       return (
@@ -997,7 +1013,10 @@ export class FormItemWrap extends React.Component<FormItemProps> {
         >
           <div className={cx('Form-rowInner')}>
             {label && renderLabel !== false ? (
-              <label className={cx(`Form-label`, labelClassName)}>
+              <label
+                className={cx(`Form-label`, labelClassName)}
+                style={labelWidth != null ? {width: labelWidth} : undefined}
+              >
                 <span>
                   {render(
                     'label',
@@ -1256,7 +1275,13 @@ export function asFormItem(config: Omit<FormItemConfig, 'component'>) {
             }
 
             // 把可能会影响视图的白名单弄出来，减少重新渲染次数。
-            if (anyChanged(detectProps, this.props, nextProps)) {
+            if (
+              anyChanged(
+                detectProps.concat(config.detectProps || []),
+                this.props,
+                nextProps
+              )
+            ) {
               return true;
             }
 

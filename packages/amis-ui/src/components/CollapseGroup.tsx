@@ -11,8 +11,9 @@ export interface CollapseItem {
   [propName: string]: any;
 }
 
-import {ClassNamesFn, themeable} from 'amis-core';
+import {ClassNamesFn, themeable, autobind} from 'amis-core';
 import type {SchemaNode} from 'amis-core';
+import isEqual from 'lodash/isEqual';
 
 export interface CollapseGroupProps {
   defaultActiveKey?: Array<string | number | never> | string | number;
@@ -41,40 +42,61 @@ class CollapseGroup extends React.Component<
 
   constructor(props: CollapseGroupProps) {
     super(props);
-
     // 传入的activeKey会被自动转换为defaultActiveKey
-    let activeKey = props.defaultActiveKey;
-    if (!Array.isArray(activeKey)) {
-      activeKey = activeKey ? [activeKey] : [];
+    this.updateActiveKey(props.defaultActiveKey, true);
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps: CollapseGroupProps) {
+    const props = this.props;
+
+    if (!isEqual(props.defaultActiveKey, nextProps.defaultActiveKey)) {
+      this.updateActiveKey(nextProps.defaultActiveKey);
+    }
+  }
+
+  @autobind
+  updateActiveKey(propsActiveKey: any, isInit?: boolean) {
+    const props = this.props;
+    let curActiveKey = propsActiveKey;
+    
+    if (!Array.isArray(curActiveKey)) {
+      curActiveKey = curActiveKey ? [curActiveKey] : [];
     }
     if (props.accordion) {
       // 手风琴模式下只展开第一个元素
-      activeKey = activeKey.length ? [activeKey[0]] : [];
+      curActiveKey = curActiveKey.length ? [curActiveKey[0]] : [];
     }
 
-    this.state = {
-      activeKey: activeKey.map((key: number | string) => String(key))
-    };
+    if (isInit) {
+      this.state = {
+        activeKey: curActiveKey.map((key: number | string) => String(key))
+      };
+    } else {
+      this.setState({
+        activeKey: curActiveKey.map((key: number | string) => String(key))
+      });
+    }
   }
 
-  collapseChange(item: CollapseItem, collapsed: boolean) {
-    let activeKey = this.state.activeKey;
-    if (collapsed) {
+  collapseChange(collapseId: string, collapsed: boolean) {
+    let activeKey = this.state.activeKey.concat();
+    if (!collapsed) {
+      // 开启状态
       if (this.props.accordion) {
         activeKey = [];
       } else {
         for (let i = 0; i < activeKey.length; i++) {
-          if (activeKey[i] === item.id) {
-            activeKey.splice(i, 1);
+          if (activeKey[i] === collapseId) {
+            activeKey.splice(i, 1); // 剔除开启状态
             break;
           }
         }
       }
     } else {
       if (this.props.accordion) {
-        activeKey = [item.id as string];
+        activeKey = [collapseId as string];
       } else {
-        activeKey.push(item.id as string);
+        activeKey.push(collapseId as string);
       }
     }
     this.setState({
@@ -90,18 +112,18 @@ class CollapseGroup extends React.Component<
     return children.map((child: React.ReactElement, index: number) => {
       let props = child.props;
 
-      const id = props.propKey || String(index);
-      const collapsed = this.state.activeKey.indexOf(id) === -1;
+      const collapseId = props.propKey || String(index);
+      // 判断是否折叠
+      const collapsed = this.state.activeKey.indexOf(collapseId) === -1;
 
       return React.cloneElement(child as any, {
         ...props,
-        key: id,
-        id,
+        key: collapseId,
+        collapseId,
         collapsed,
         expandIcon: this.props.expandIcon,
         propsUpdate: true,
-        onCollapse: (item: CollapseItem, collapsed: boolean) =>
-          this.collapseChange(item, collapsed)
+        onCollapse: () => this.collapseChange(collapseId, collapsed)
       });
     });
   };

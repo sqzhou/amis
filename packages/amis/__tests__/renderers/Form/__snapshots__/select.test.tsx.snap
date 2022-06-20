@@ -68,19 +68,26 @@ exports[`Renderer: chained select 1`] = `
                       class="cxd-ResultBox cxd-TransferDropDown cxd-Form-control is-clickable is-group"
                       tabindex="-1"
                     >
-                      <span
-                        class="cxd-ResultBox-placeholder"
+                      <div
+                        class="cxd-ResultBox-value-wrap"
                       >
-                        请选择
-                      </span>
-                      <span
-                        class="cxd-TransferDropDown-icon"
-                      >
-                        <icon-mock
-                          classname="icon icon-right-arrow-bold"
-                          icon="right-arrow-bold"
-                        />
-                      </span>
+                        <span
+                          class="cxd-ResultBox-placeholder"
+                        >
+                          请选择
+                        </span>
+                        <span
+                          class="cxd-TransferDropDown-icon"
+                        >
+                          <icon-mock
+                            classname="icon icon-right-arrow-bold"
+                            icon="right-arrow-bold"
+                          />
+                        </span>
+                      </div>
+                      <div
+                        class="cxd-ResultBox-actions"
+                      />
                     </div>
                   </div>
                 </div>
@@ -217,19 +224,26 @@ exports[`Renderer:select associated 1`] = `
                       class="cxd-ResultBox cxd-TransferDropDown cxd-Form-control is-clickable"
                       tabindex="-1"
                     >
-                      <span
-                        class="cxd-ResultBox-placeholder"
+                      <div
+                        class="cxd-ResultBox-value-wrap"
                       >
-                        请选择
-                      </span>
-                      <span
-                        class="cxd-TransferDropDown-icon"
-                      >
-                        <icon-mock
-                          classname="icon icon-right-arrow-bold"
-                          icon="right-arrow-bold"
-                        />
-                      </span>
+                        <span
+                          class="cxd-ResultBox-placeholder"
+                        >
+                          请选择
+                        </span>
+                        <span
+                          class="cxd-TransferDropDown-icon"
+                        >
+                          <icon-mock
+                            classname="icon icon-right-arrow-bold"
+                            icon="right-arrow-bold"
+                          />
+                        </span>
+                      </div>
+                      <div
+                        class="cxd-ResultBox-actions"
+                      />
                     </div>
                   </div>
                 </div>
@@ -366,19 +380,26 @@ exports[`Renderer:select chained 1`] = `
                       class="cxd-ResultBox cxd-TransferDropDown cxd-Form-control is-clickable"
                       tabindex="-1"
                     >
-                      <span
-                        class="cxd-ResultBox-placeholder"
+                      <div
+                        class="cxd-ResultBox-value-wrap"
                       >
-                        请选择
-                      </span>
-                      <span
-                        class="cxd-TransferDropDown-icon"
-                      >
-                        <icon-mock
-                          classname="icon icon-right-arrow-bold"
-                          icon="right-arrow-bold"
-                        />
-                      </span>
+                        <span
+                          class="cxd-ResultBox-placeholder"
+                        >
+                          请选择
+                        </span>
+                        <span
+                          class="cxd-TransferDropDown-icon"
+                        >
+                          <icon-mock
+                            classname="icon icon-right-arrow-bold"
+                            icon="right-arrow-bold"
+                          />
+                        </span>
+                      </div>
+                      <div
+                        class="cxd-ResultBox-actions"
+                      />
                     </div>
                   </div>
                 </div>
@@ -515,19 +536,26 @@ exports[`Renderer:select group 1`] = `
                       class="cxd-ResultBox cxd-TransferDropDown cxd-Form-control is-clickable"
                       tabindex="-1"
                     >
-                      <span
-                        class="cxd-ResultBox-placeholder"
+                      <div
+                        class="cxd-ResultBox-value-wrap"
                       >
-                        请选择
-                      </span>
-                      <span
-                        class="cxd-TransferDropDown-icon"
-                      >
-                        <icon-mock
-                          classname="icon icon-right-arrow-bold"
-                          icon="right-arrow-bold"
-                        />
-                      </span>
+                        <span
+                          class="cxd-ResultBox-placeholder"
+                        >
+                          请选择
+                        </span>
+                        <span
+                          class="cxd-TransferDropDown-icon"
+                        >
+                          <icon-mock
+                            classname="icon icon-right-arrow-bold"
+                            icon="right-arrow-bold"
+                          />
+                        </span>
+                      </div>
+                      <div
+                        class="cxd-ResultBox-actions"
+                      />
                     </div>
                   </div>
                 </div>
@@ -821,19 +849,26 @@ exports[`Renderer:select table 1`] = `
                       class="cxd-ResultBox cxd-TransferDropDown cxd-Form-control is-clickable"
                       tabindex="-1"
                     >
-                      <span
-                        class="cxd-ResultBox-placeholder"
+                      <div
+                        class="cxd-ResultBox-value-wrap"
                       >
-                        请选择
-                      </span>
-                      <span
-                        class="cxd-TransferDropDown-icon"
-                      >
-                        <icon-mock
-                          classname="icon icon-right-arrow-bold"
-                          icon="right-arrow-bold"
-                        />
-                      </span>
+                        <span
+                          class="cxd-ResultBox-placeholder"
+                        >
+                          请选择
+                        </span>
+                        <span
+                          class="cxd-TransferDropDown-icon"
+                        >
+                          <icon-mock
+                            classname="icon icon-right-arrow-bold"
+                            icon="right-arrow-bold"
+                          />
+                        </span>
+                      </div>
+                      <div
+                        class="cxd-ResultBox-actions"
+                      />
                     </div>
                   </div>
                 </div>
@@ -960,47 +995,54 @@ exports[`Renderer:select table with labelField & valueField 1`] = `
               tabindex="-1"
             >
               <div
-                class="cxd-ResultBox-value"
+                class="cxd-ResultBox-value-wrap"
               >
-                <span
-                  class="cxd-ResultBox-valueLabel"
+                <div
+                  class="cxd-ResultBox-value"
                 >
-                  诸葛亮
-                </span>
-                <a
-                  data-index="0"
+                  <span
+                    class="cxd-ResultBox-valueLabel"
+                  >
+                    诸葛亮
+                  </span>
+                  <a
+                    data-index="0"
+                  >
+                    <icon-mock
+                      classname="icon icon-close"
+                      icon="close"
+                    />
+                  </a>
+                </div>
+                <div
+                  class="cxd-ResultBox-value"
+                >
+                  <span
+                    class="cxd-ResultBox-valueLabel"
+                  >
+                    李白
+                  </span>
+                  <a
+                    data-index="1"
+                  >
+                    <icon-mock
+                      classname="icon icon-close"
+                      icon="close"
+                    />
+                  </a>
+                </div>
+                <span
+                  class="cxd-TransferDropDown-icon"
                 >
                   <icon-mock
-                    classname="icon icon-close"
-                    icon="close"
+                    classname="icon icon-right-arrow-bold"
+                    icon="right-arrow-bold"
                   />
-                </a>
+                </span>
               </div>
               <div
-                class="cxd-ResultBox-value"
-              >
-                <span
-                  class="cxd-ResultBox-valueLabel"
-                >
-                  李白
-                </span>
-                <a
-                  data-index="1"
-                >
-                  <icon-mock
-                    classname="icon icon-close"
-                    icon="close"
-                  />
-                </a>
-              </div>
-              <span
-                class="cxd-TransferDropDown-icon"
-              >
-                <icon-mock
-                  classname="icon icon-right-arrow-bold"
-                  icon="right-arrow-bold"
-                />
-              </span>
+                class="cxd-ResultBox-actions"
+              />
               <div
                 class="resize-sensor"
                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: scroll; z-index: -1; visibility: hidden;"
@@ -1443,19 +1485,26 @@ exports[`Renderer:select tree 1`] = `
                       class="cxd-ResultBox cxd-TransferDropDown cxd-Form-control is-clickable"
                       tabindex="-1"
                     >
-                      <span
-                        class="cxd-ResultBox-placeholder"
+                      <div
+                        class="cxd-ResultBox-value-wrap"
                       >
-                        请选择
-                      </span>
-                      <span
-                        class="cxd-TransferDropDown-icon"
-                      >
-                        <icon-mock
-                          classname="icon icon-right-arrow-bold"
-                          icon="right-arrow-bold"
-                        />
-                      </span>
+                        <span
+                          class="cxd-ResultBox-placeholder"
+                        >
+                          请选择
+                        </span>
+                        <span
+                          class="cxd-TransferDropDown-icon"
+                        >
+                          <icon-mock
+                            classname="icon icon-right-arrow-bold"
+                            icon="right-arrow-bold"
+                          />
+                        </span>
+                      </div>
+                      <div
+                        class="cxd-ResultBox-actions"
+                      />
                     </div>
                   </div>
                 </div>
@@ -1605,7 +1654,7 @@ exports[`Renderer:select virtual 1`] = `
               </span>
               <div
                 class="cxd-PopOver cxd-Select-popover cxd-PopOver--leftBottomLeftTop"
-                style="display: block; width: 0px; left: 0px; top: 0px; position: relative;"
+                style="display: block; width: auto; left: 0px; top: 0px; position: relative;"
                 theme="cxd"
               >
                 <div
@@ -1625,14 +1674,14 @@ exports[`Renderer:select virtual 1`] = `
                     style="overflow: auto; will-change: transform; height: 266px; width: 100%;"
                   >
                     <div
-                      style="position: relative; width: auto; white-space: nowrap; min-height: 100%; height: 7000px;"
+                      style="position: relative; width: auto; white-space: nowrap; min-height: 100%; height: 6400px;"
                     >
                       <div
                         aria-selected="false"
                         class="cxd-Select-option"
                         id="downshift-1-item-0"
                         role="option"
-                        style="position: absolute; top: 0px; left: 0px; width: auto; height: 35px;"
+                        style="position: absolute; top: 0px; left: 0px; width: 100%; height: 32px;"
                       >
                         <span
                           class="cxd-Select-option-content"
@@ -1646,7 +1695,7 @@ exports[`Renderer:select virtual 1`] = `
                         class="cxd-Select-option"
                         id="downshift-1-item-1"
                         role="option"
-                        style="position: absolute; top: 35px; left: 0px; width: auto; height: 35px;"
+                        style="position: absolute; top: 32px; left: 0px; width: 100%; height: 32px;"
                       >
                         <span
                           class="cxd-Select-option-content"
@@ -1660,7 +1709,7 @@ exports[`Renderer:select virtual 1`] = `
                         class="cxd-Select-option"
                         id="downshift-1-item-2"
                         role="option"
-                        style="position: absolute; top: 70px; left: 0px; width: auto; height: 35px;"
+                        style="position: absolute; top: 64px; left: 0px; width: 100%; height: 32px;"
                       >
                         <span
                           class="cxd-Select-option-content"
@@ -1674,7 +1723,7 @@ exports[`Renderer:select virtual 1`] = `
                         class="cxd-Select-option"
                         id="downshift-1-item-3"
                         role="option"
-                        style="position: absolute; top: 105px; left: 0px; width: auto; height: 35px;"
+                        style="position: absolute; top: 96px; left: 0px; width: 100%; height: 32px;"
                       >
                         <span
                           class="cxd-Select-option-content"
@@ -1688,7 +1737,7 @@ exports[`Renderer:select virtual 1`] = `
                         class="cxd-Select-option"
                         id="downshift-1-item-4"
                         role="option"
-                        style="position: absolute; top: 140px; left: 0px; width: auto; height: 35px;"
+                        style="position: absolute; top: 128px; left: 0px; width: 100%; height: 32px;"
                       >
                         <span
                           class="cxd-Select-option-content"
@@ -1702,7 +1751,7 @@ exports[`Renderer:select virtual 1`] = `
                         class="cxd-Select-option"
                         id="downshift-1-item-5"
                         role="option"
-                        style="position: absolute; top: 175px; left: 0px; width: auto; height: 35px;"
+                        style="position: absolute; top: 160px; left: 0px; width: 100%; height: 32px;"
                       >
                         <span
                           class="cxd-Select-option-content"
@@ -1716,7 +1765,7 @@ exports[`Renderer:select virtual 1`] = `
                         class="cxd-Select-option"
                         id="downshift-1-item-6"
                         role="option"
-                        style="position: absolute; top: 210px; left: 0px; width: auto; height: 35px;"
+                        style="position: absolute; top: 192px; left: 0px; width: 100%; height: 32px;"
                       >
                         <span
                           class="cxd-Select-option-content"
@@ -1730,7 +1779,7 @@ exports[`Renderer:select virtual 1`] = `
                         class="cxd-Select-option"
                         id="downshift-1-item-7"
                         role="option"
-                        style="position: absolute; top: 245px; left: 0px; width: auto; height: 35px;"
+                        style="position: absolute; top: 224px; left: 0px; width: 100%; height: 32px;"
                       >
                         <span
                           class="cxd-Select-option-content"
@@ -1744,7 +1793,7 @@ exports[`Renderer:select virtual 1`] = `
                         class="cxd-Select-option"
                         id="downshift-1-item-8"
                         role="option"
-                        style="position: absolute; top: 280px; left: 0px; width: auto; height: 35px;"
+                        style="position: absolute; top: 256px; left: 0px; width: 100%; height: 32px;"
                       >
                         <span
                           class="cxd-Select-option-content"
@@ -1758,7 +1807,7 @@ exports[`Renderer:select virtual 1`] = `
                         class="cxd-Select-option"
                         id="downshift-1-item-9"
                         role="option"
-                        style="position: absolute; top: 315px; left: 0px; width: auto; height: 35px;"
+                        style="position: absolute; top: 288px; left: 0px; width: 100%; height: 32px;"
                       >
                         <span
                           class="cxd-Select-option-content"
@@ -1772,13 +1821,27 @@ exports[`Renderer:select virtual 1`] = `
                         class="cxd-Select-option"
                         id="downshift-1-item-10"
                         role="option"
-                        style="position: absolute; top: 350px; left: 0px; width: auto; height: 35px;"
+                        style="position: absolute; top: 320px; left: 0px; width: 100%; height: 32px;"
                       >
                         <span
                           class="cxd-Select-option-content"
                           title="option10"
                         >
                           option10
+                        </span>
+                      </div>
+                      <div
+                        aria-selected="false"
+                        class="cxd-Select-option"
+                        id="downshift-1-item-11"
+                        role="option"
+                        style="position: absolute; top: 352px; left: 0px; width: 100%; height: 32px;"
+                      >
+                        <span
+                          class="cxd-Select-option-content"
+                          title="option11"
+                        >
+                          option11
                         </span>
                       </div>
                     </div>

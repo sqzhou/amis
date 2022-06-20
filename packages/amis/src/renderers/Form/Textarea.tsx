@@ -60,7 +60,7 @@ export interface TextareaControlSchema extends FormBaseControlSchema {
   resetValue?: string;
 }
 
-export type TextAreaRendererEvent = 'blur' | 'focus';
+export type TextAreaRendererEvent = 'blur' | 'focus' | 'change';
 
 export interface TextAreaProps extends FormControlProps {
   placeholder?: string;
@@ -105,6 +105,17 @@ export default class TextAreaControl extends React.Component<
   }
 
   @autobind
+  @bindRendererEvent<TextAreaProps, TextAreaRendererEvent>(
+    'change',
+    undefined,
+    false
+  )
+  handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    const {onChange} = this.props;
+    onChange && onChange(e);
+  }
+
+  @autobind
   @bindRendererEvent<TextAreaProps, TextAreaRendererEvent>('focus')
   handleFocus(e: React.FocusEvent<HTMLTextAreaElement>) {
     const {onFocus} = this.props;
@@ -142,7 +153,12 @@ export default class TextAreaControl extends React.Component<
     const {...rest} = this.props;
 
     return (
-      <Textarea {...rest} onFocus={this.handleFocus} onBlur={this.handleBlur} />
+      <Textarea
+        {...rest}
+        onFocus={this.handleFocus}
+        onBlur={this.handleBlur}
+        onChange={this.handleChange}
+      />
     );
   }
 }
