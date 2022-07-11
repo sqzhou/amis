@@ -51,7 +51,7 @@ export interface CRUD2CommonSchema extends BaseSchema {
   /**
    * 指定内容区的展示模式。
    */
-  mode?: 'table' | 'grid' | 'cards' | /* grid 的别名*/ 'list';
+  mode?: 'table' | 'grid' | 'cards' | /* grid 的别名*/ 'list' | 'table-v2';
 
   /**
    * 初始化数据 API
@@ -276,6 +276,13 @@ export default class CRUD2 extends React.Component<CRUD2Props, any> {
       this.props.store.updateData({
         items: []
       });
+    }
+
+    // 自定义列需要用store里的数据同步显示列
+    // 所以需要先初始化一下
+    const {mode, columns} = props;
+    if (mode === 'table-v2' && columns) {
+      store.updateColumns(columns);
     }
   }
 
@@ -872,6 +879,7 @@ export default class CRUD2 extends React.Component<CRUD2Props, any> {
   /**
    * 表格列上的筛选触发
    */
+  @autobind
   handleTableQuery(values: object, forceReload: boolean = false) {
     const {store, syncLocation, env, pageField, perPageField} = this.props;
 
@@ -944,6 +952,27 @@ export default class CRUD2 extends React.Component<CRUD2Props, any> {
   }
 
   @autobind
+  toggleAllColumns(value: boolean) {
+    const {store} = this.props;
+
+    store.updateColumns(
+      store.columns.map((c: any) => ({...c, toggled: value}))
+    );
+  }
+
+  @autobind
+  toggleToggle(toggled: boolean, index: number) {
+    const {store} = this.props;
+
+    store.updateColumns(
+      store.columns.map((c: any, i: number) => ({
+        ...c,
+        toggled: index === i ? toggled : c.toggled !== false
+      }))
+    );
+  }
+
+  @autobind
   renderChild(region: string, schema: any, props: object = {}) {
     const {render, store} = this.props;
 
@@ -953,7 +982,10 @@ export default class CRUD2 extends React.Component<CRUD2Props, any> {
       lastPage: store.lastPage,
       perPage: store.perPage,
       total: store.total,
-      onPageChange: this.handleChangePage
+      onPageChange: this.handleChangePage,
+      cols: store.columns, // 和grid的columns属性重复，ColumnsToggler的columns改一下名字 只有用store里的columns
+      toggleAllColumns: this.toggleAllColumns,
+      toggleToggle: this.toggleToggle
       // onAction: onAction
     };
 
@@ -1130,13 +1162,15 @@ export default class CRUD2 extends React.Component<CRUD2Props, any> {
             popOverContainer,
             onSave: this.handleSave,
             onSaveOrder: this.handleSaveOrder,
-            onQuery: this.handleTableQuery,
+            onSearch: this.handleTableQuery,
+            onSort: this.handleTableQuery,
             onSelect: this.handleSelect,
-            data: store.mergedData
+            data: store.mergedData,
+            loading: store.loading
           }
         )}
-
-        <Spinner overlay size="lg" key="info" show={store.loading} />
+        {/* spinner可以交给孩子处理 */}
+        {/* <Spinner overlay size="lg" key="info" show={store.loading} /> */}
 
         <div className={cx('Crud2-toolbar')}>
           {this.renderToolbar('footerToolbar', footerToolbar)}

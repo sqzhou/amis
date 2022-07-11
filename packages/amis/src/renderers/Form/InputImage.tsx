@@ -448,7 +448,12 @@ export default class ImageControl extends React.Component<
   }
 
   componentDidMount() {
-    this.syncAutoFill();
+    if (this.initAutoFill) {
+      const {formInited, addHook} = this.props;
+      formInited || !addHook
+        ? this.syncAutoFill()
+        : addHook(this.syncAutoFill, 'init');
+    }
   }
 
   componentDidUpdate(prevProps: ImageProps) {
@@ -697,8 +702,8 @@ export default class ImageControl extends React.Component<
           uploading: false,
           locked: false
         },
-        () => {
-          this.onChange(!!this.resolve, false);
+        async () => {
+          await this.onChange(!!this.resolve, false);
 
           if (this.resolve) {
             this.resolve(
@@ -815,6 +820,10 @@ export default class ImageControl extends React.Component<
 
   syncAutoFill() {
     const {autoFill, multiple, onBulkChange, data, name} = this.props;
+    // 参照录入｜自动填充
+    if (autoFill?.hasOwnProperty('api')) {
+      return;
+    }
     // 排除自身的字段，否则会无限更新state
     const excludeSelfAutoFill = omit(autoFill, name || '');
 

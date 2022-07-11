@@ -7,7 +7,7 @@ import isEqual from 'lodash/isEqual';
 import {ScopedContext, IScopedContext} from 'amis-core';
 import {Renderer, RendererProps} from 'amis-core';
 import {ActionObject} from 'amis-core';
-import {Icon, Table} from 'amis-ui';
+import {Icon, Table, Spinner} from 'amis-ui';
 import {BaseSchema, SchemaObject, SchemaTokenizeableString} from '../../Schema';
 import {
   isObject,
@@ -31,6 +31,7 @@ import {HeadCellSearchDropDown} from './HeadCellSearchDropdown';
 import './TableCell';
 import './ColumnToggler';
 import type {SortProps} from 'amis-ui/lib/components/table';
+import {Action} from '../../types';
 
 /**
  * Table 表格v2渲染器。
@@ -236,7 +237,7 @@ export interface TableSchemaV2 extends BaseSchema {
   /**
    * 表格可自定义列
    */
-  columnsTogglable?: boolean;
+  columnsTogglable?: boolean | string | SchemaObject;
 
   /**
    * 表格列配置
@@ -343,13 +344,6 @@ export default class TableV2 extends React.Component<TableV2Props, object> {
     const scoped = context;
     scoped.registerComponent(this);
 
-    this.handleColumnToggle = this.handleColumnToggle.bind(this);
-    this.getPopOverContainer = this.getPopOverContainer.bind(this);
-    this.handleAction = this.handleAction.bind(this);
-    this.handleQuickChange = this.handleQuickChange.bind(this);
-    this.handleSave = this.handleSave.bind(this);
-    this.controlRef = this.controlRef.bind(this);
-
     const {store, columnsTogglable, columns} = props;
 
     store.update({columnsTogglable, columns});
@@ -361,6 +355,7 @@ export default class TableV2 extends React.Component<TableV2Props, object> {
     scoped.unRegisterComponent(this);
   }
 
+  @autobind
   controlRef(control: any) {
     // 因为 control 有可能被 n 层 hoc 包裹。
     while (control && control.getWrappedInstance) {
@@ -486,6 +481,7 @@ export default class TableV2 extends React.Component<TableV2Props, object> {
     }
   }
 
+  @autobind
   getPopOverContainer() {
     return findDOMNode(this);
   }
@@ -773,6 +769,7 @@ export default class TableV2 extends React.Component<TableV2Props, object> {
     scoped.reload(target, data);
   }
 
+  @autobind
   handleSave(
     rows: Array<object> | object,
     diff: Array<object> | object,
@@ -847,6 +844,7 @@ export default class TableV2 extends React.Component<TableV2Props, object> {
     }
   }
 
+  @autobind
   handleQuickChange(
     item: IRowV2,
     values: object,
@@ -902,73 +900,8 @@ export default class TableV2 extends React.Component<TableV2Props, object> {
         );
   }
 
-  async handleColumnToggle(columns: Array<IColumnV2>) {
-    const {dispatchEvent, data, store} = this.props;
-
-    const rendererEvent = await dispatchEvent(
-      'columnToggled',
-      createObject(data, {
-        columns
-      })
-    );
-
-    if (rendererEvent?.prevented) {
-      return;
-    }
-
-    store.update({columns});
-  }
-
-  renderColumnsToggler() {
-    const {
-      className,
-      store,
-      render,
-      classPrefix: ns,
-      classnames: cx,
-      ...rest
-    } = this.props;
-    const __ = rest.translate;
-    const env = rest.env;
-
-    if (!store.toggable) {
-      return null;
-    }
-
-    const children = store.toggableColumns.map((column, index) => (
-      <li
-        className={cx('ColumnToggler-menuItem')}
-        key={'toggable-li-' + index}
-        onClick={column.toggleToggle}
-      >
-        <Checkbox
-          key={'toggable-select' + index}
-          size="sm"
-          classPrefix={ns}
-          checked={column.toggled}
-        >
-          {column.title ? render('tpl', column.title) : null}
-        </Checkbox>
-      </li>
-    ));
-
-    return render(
-      'column-toggler',
-      {
-        type: 'column-toggler'
-      },
-      {
-        isActived: store.hasColumnHidden(),
-        columns: store.columnsData,
-        onColumnToggle: this.handleColumnToggle,
-        children,
-        tooltipContainer:
-          env && env.getModalContainer ? env.getModalContainer : undefined
-      }
-    );
-  }
-
-  handleAction(e: React.UIEvent<any>, action: ActionObject, ctx: object) {
+  @autobind
+  handleAction(e: React.UIEvent<any>, action: Action, ctx: object) {
     const {onAction} = this.props;
 
     // todo
@@ -976,18 +909,46 @@ export default class TableV2 extends React.Component<TableV2Props, object> {
   }
 
   renderActions(region: string) {
-    let {actions, render, store, classnames: cx, data} = this.props;
+    let {
+      actions,
+      render,
+      store,
+      classnames: cx,
+      data,
+      columnsTogglable,
+      $path
+    } = this.props;
+
+    // 如果table是在crud里面，自定义显示列配置在grid里，这里就不需要渲染了
+    const isInCrud = /(?:\/|^)crud2\//.test($path as string);
 
     actions = Array.isArray(actions) ? actions.concat() : [];
 
+    // 现在默认从crud里传进来的columnsTogglable是boolean类型
+    // table单独配置的是SchemaNode类型
     if (
+      !isInCrud &&
       store.toggable &&
       region === 'header' &&
       !~this.renderedToolbars.indexOf('columns-toggler')
     ) {
       actions.push({
         type: 'button',
-        children: this.renderColumnsToggler()
+        children: render(
+          'column-toggler',
+          {
+            ...(isObject(columnsTogglable) ? columnsTogglable : {}),
+            type: 'column-toggler'
+          },
+          {
+            cols: store.columnsData.map(item => item.pristine),
+            toggleAllColumns: () => store.toggleAllColumns(),
+            toggleToggle: (toggled: boolean, index: number) => {
+              const column = store.columnsData[index];
+              column.toggleToggle();
+            }
+          }
+        )
       });
     }
 
@@ -1383,7 +1344,7 @@ export default class TableV2 extends React.Component<TableV2Props, object> {
   }
 
   render() {
-    const {classnames: cx} = this.props;
+    const {classnames: cx, loading = false} = this.props;
 
     this.renderedToolbars = []; // 用来记录哪些 toolbar 已经渲染了
 
@@ -1394,6 +1355,8 @@ export default class TableV2 extends React.Component<TableV2Props, object> {
         {this.renderActions('header')}
         {heading}
         {this.renderTable()}
+
+        <Spinner overlay show={loading} />
       </div>
     );
   }

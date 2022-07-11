@@ -8,6 +8,9 @@ import padStart from 'lodash/padStart';
 import capitalize from 'lodash/capitalize';
 import escape from 'lodash/escape';
 import truncate from 'lodash/truncate';
+import uniqWith from 'lodash/uniqWith';
+import uniqBy from 'lodash/uniqBy';
+import isEqual from 'lodash/isEqual';
 import {EvaluatorOptions, FilterContext, FilterMap, FunctionMap} from './types';
 
 export class Evaluator {
@@ -1453,6 +1456,7 @@ export class Evaluator {
    * 返回时间的时间戳
    *
    * @example TIMESTAMP(date[, format = "X"])
+   * @example TIMESTAMP(date, 'x')
    * @namespace 日期函数
    * @param {date} date 日期对象
    * @param {string} format 时间戳格式，带毫秒传入 'x'。默认为 'X' 不带毫秒的。
@@ -1491,6 +1495,7 @@ export class Evaluator {
    * 将日期转成日期字符串
    *
    * @example DATETOSTR(date[, format="YYYY-MM-DD HH:mm:ss"])
+   * @example DATETOSTR(date, 'YYYY-MM-DD')
    * @namespace 日期函数
    * @param {date} date 日期对象
    * @param {string} format 日期格式，默认为 "YYYY-MM-DD HH:mm:ss"
@@ -1855,6 +1860,43 @@ export class Evaluator {
     } else {
       return '';
     }
+  }
+
+  /**
+   * 数组合并
+   *
+   * 示例：
+   *
+   * CONCAT(['a', 'b', 'c'], ['1'], ['3']) 得到 ['a', 'b', 'c', '1', '3']
+   *
+   * @param {Array<any>} arr 数组
+   * @namespace 数组
+   * @example CONCAT(['a', 'b', 'c'], ['1'], ['3'])
+   * @returns {Array<any>} 结果
+   */
+  fnCONCAT(...arr: any[]) {
+    if (arr?.[0] && !Array.isArray(arr[0])) {
+      arr[0] = [arr[0]];
+    }
+    return arr.reduce((a, b) => a.concat(b), []).filter((item: any) => item);
+  }
+
+  /**
+   * 数组去重，第二个参数「field」，可指定根据该字段去重
+   *
+   * 示例：
+   *
+   * UNIQ([{a: '1'}, {b: '2'}, {a: '1'}]， 'id')
+   *
+   * @param {Array<any>} arr 数组
+   * @param {string} field 字段
+   * @namespace 数组
+   * @example UNIQ([{a: '1'}, {b: '2'}, {a: '1'}])
+   * @example UNIQ([{a: '1'}, {b: '2'}, {a: '1'}], 'x')
+   * @returns {Array<any>} 结果
+   */
+  fnUNIQ(arr: any[], field?: string) {
+    return field ? uniqBy(arr, field) : uniqWith(arr, isEqual);
   }
 }
 

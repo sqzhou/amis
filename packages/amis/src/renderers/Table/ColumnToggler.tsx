@@ -3,8 +3,8 @@ import {findDOMNode} from 'react-dom';
 import Sortable from 'sortablejs';
 import cloneDeep from 'lodash/cloneDeep';
 import {RendererProps} from 'amis-core';
-import {Overlay} from 'amis-ui';
-import {PopOver} from 'amis-ui';
+import {Overlay} from 'amis-core';
+import {PopOver} from 'amis-core';
 import {Modal} from 'amis-ui';
 import {Button} from 'amis-ui';
 import {Checkbox} from 'amis-ui';
@@ -17,7 +17,8 @@ import {getIcon} from 'amis-ui';
 import {generateIcon} from 'amis-core';
 import {RootClose} from 'amis-core';
 import type {TooltipObject} from 'amis-ui/lib/components/TooltipWrapper';
-import type {IColumn} from 'amis-core/lib/store/table';
+import {IColumn} from 'amis-core/lib/store/table';
+import type {IColumnV2} from 'amis-core/lib/store/table-v2';
 
 export interface ColumnTogglerProps extends RendererProps {
   /**
@@ -113,14 +114,14 @@ export interface ColumnTogglerProps extends RendererProps {
   /**
    * 列数据
    */
-  columns: Array<IColumn>;
+  columns: Array<IColumn | IColumnV2>;
 
   /**
    * 弹窗底部按钮大小
    */
   footerBtnSize?: 'xs' | 'sm' | 'md' | 'lg';
 
-  activeToggaleColumns: Array<IColumn>;
+  activeToggaleColumns: Array<IColumn | IColumnV2>;
   onColumnToggle: (columns: Array<IColumn>) => void;
   modalContainer?: () => HTMLElement;
 }

@@ -9,9 +9,9 @@ import moment from 'moment';
 import {findDOMNode} from 'react-dom';
 import cx from 'classnames';
 import {Icon} from './icons';
-import Overlay from './Overlay';
+import {Overlay} from 'amis-core';
 import Calendar from './calendar/Calendar';
-import PopOver from './PopOver';
+import {PopOver} from 'amis-core';
 import PopUp from './PopUp';
 import {themeable, ThemeProps} from 'amis-core';
 
@@ -53,6 +53,7 @@ export interface MonthRangePickerProps extends ThemeProps, LocaleProps {
   useMobileUI?: boolean;
   onFocus?: Function;
   onBlur?: Function;
+  label?: string | false;
 }
 
 export interface MonthRangePickerState {
@@ -556,7 +557,8 @@ export class MonthRangePicker extends React.Component<
       maxDate,
       minDuration,
       maxDuration,
-      ranges
+      ranges,
+      label
     } = this.props;
     const mobileUI = isMobile() && useMobileUI;
 
@@ -617,7 +619,7 @@ export class MonthRangePicker extends React.Component<
 
     const CalendarMobileTitle = (
       <div className={`${ns}CalendarMobile-title`}>
-        {__('Calendar.datepicker')}
+        {label && typeof label === 'string' ? label : __('Calendar.datepicker')}
       </div>
     );
 
