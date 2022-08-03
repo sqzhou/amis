@@ -434,6 +434,10 @@ exports[`Renderer:table 1`] = `
         </table>
       </div>
     </div>
+    <div
+      class="cxd-Table-fixedTop-shadow"
+      style=""
+    />
   </div>
 </div>
 `;
@@ -494,6 +498,7 @@ exports[`Renderer:table align 1`] = `
               >
                 <div
                   class="cxd-TableCell--title"
+                  style="text-align: right;"
                 />
                 <div
                   class="cxd-Table-content-colDragLine"
@@ -877,6 +882,7 @@ exports[`Renderer:table align 1`] = `
               >
                 <div
                   class="cxd-TableCell--title"
+                  style="text-align: right;"
                 />
                 <div
                   class="cxd-Table-content-colDragLine"
@@ -887,6 +893,10 @@ exports[`Renderer:table align 1`] = `
         </table>
       </div>
     </div>
+    <div
+      class="cxd-Table-fixedTop-shadow"
+      style=""
+    />
   </div>
 </div>
 `;
@@ -1653,6 +1663,10 @@ exports[`Renderer:table children 1`] = `
                   </table>
                 </div>
               </div>
+              <div
+                class="cxd-Table-fixedTop-shadow"
+                style=""
+              />
             </div>
           </div>
         </div>
@@ -2096,14 +2110,18 @@ exports[`Renderer:table classNameExpr 1`] = `
         </table>
       </div>
     </div>
+    <div
+      class="cxd-Table-fixedTop-shadow"
+      style=""
+    />
   </div>
 </div>
 `;
 
-exports[`Renderer:table column head style 1`] = `
+exports[`Renderer:table column head style className 1`] = `
 <div>
   <div
-    class="cxd-Table"
+    class="cxd-Table className"
   >
     <div
       class="cxd-Table-heading"
@@ -2120,7 +2138,7 @@ exports[`Renderer:table column head style 1`] = `
         class="cxd-Table-fixedRight"
       >
         <table
-          class="cxd-Table-table cxd-Table-table"
+          class="cxd-Table-table cxd-Table-table tableClassName"
           style="width: 0px; table-layout: auto;"
         >
           <thead>
@@ -2318,7 +2336,7 @@ exports[`Renderer:table column head style 1`] = `
         style="position: relative;"
       >
         <table
-          class="cxd-Table-table"
+          class="cxd-Table-table tableClassName"
         >
           <thead>
             <tr
@@ -2664,7 +2682,7 @@ exports[`Renderer:table column head style 1`] = `
         class="cxd-Table-fixedRight"
       >
         <table
-          class="cxd-Table-table cxd-Table-table"
+          class="cxd-Table-table cxd-Table-table tableClassName"
           style="width: 0px; table-layout: auto;"
         >
           <thead>
@@ -2700,7 +2718,7 @@ exports[`Renderer:table column head style 1`] = `
         style="width: 0px;"
       >
         <table
-          class="cxd-Table-table"
+          class="cxd-Table-table tableClassName"
           style="width: 0px; table-layout: auto; transform: translateX(-0px);"
         >
           <colgroup>
@@ -2760,6 +2778,10 @@ exports[`Renderer:table column head style 1`] = `
         </table>
       </div>
     </div>
+    <div
+      class="cxd-Table-fixedTop-shadow"
+      style=""
+    />
   </div>
 </div>
 `;
@@ -2782,7 +2804,7 @@ exports[`Renderer:table combineNum 1`] = `
             class="cxd-Service"
           >
             <div
-              class="cxd-Table m-b-none"
+              class="cxd-Table"
             >
               <div
                 class="cxd-Table-contentWrap"
@@ -3003,7 +3025,6 @@ exports[`Renderer:table combineNum 1`] = `
                       >
                         <td
                           class=""
-                          rowspan="3"
                         >
                           <span
                             class="cxd-PlainField"
@@ -3046,7 +3067,15 @@ exports[`Renderer:table combineNum 1`] = `
                       >
                         <td
                           class=""
-                          rowspan="2"
+                        >
+                          <span
+                            class="cxd-PlainField"
+                          >
+                            AOL browser (AOL desktop)
+                          </span>
+                        </td>
+                        <td
+                          class=""
                         >
                           <span
                             class="cxd-PlainField"
@@ -3084,6 +3113,24 @@ exports[`Renderer:table combineNum 1`] = `
                           <span
                             class="cxd-PlainField"
                           >
+                            AOL browser (AOL desktop)
+                          </span>
+                        </td>
+                        <td
+                          class=""
+                        >
+                          <span
+                            class="cxd-PlainField"
+                          >
+                            Win 98
+                          </span>
+                        </td>
+                        <td
+                          class=""
+                        >
+                          <span
+                            class="cxd-PlainField"
+                          >
                             4
                           </span>
                         </td>
@@ -3114,7 +3161,6 @@ exports[`Renderer:table combineNum 1`] = `
                         </td>
                         <td
                           class=""
-                          rowspan="2"
                         >
                           <span
                             class="cxd-PlainField"
@@ -3124,7 +3170,6 @@ exports[`Renderer:table combineNum 1`] = `
                         </td>
                         <td
                           class=""
-                          rowspan="2"
                         >
                           <span
                             class="cxd-PlainField"
@@ -3162,6 +3207,24 @@ exports[`Renderer:table combineNum 1`] = `
                           <span
                             class="cxd-PlainField"
                           >
+                            Firefox 1.0
+                          </span>
+                        </td>
+                        <td
+                          class=""
+                        >
+                          <span
+                            class="cxd-PlainField"
+                          >
+                            Win 98+ / OSX.2+
+                          </span>
+                        </td>
+                        <td
+                          class=""
+                        >
+                          <span
+                            class="cxd-PlainField"
+                          >
                             5
                           </span>
                         </td>
@@ -3182,7 +3245,6 @@ exports[`Renderer:table combineNum 1`] = `
                       >
                         <td
                           class=""
-                          rowspan="3"
                         >
                           <span
                             class="cxd-PlainField"
@@ -3192,7 +3254,6 @@ exports[`Renderer:table combineNum 1`] = `
                         </td>
                         <td
                           class=""
-                          rowspan="3"
                         >
                           <span
                             class="cxd-PlainField"
@@ -3202,7 +3263,6 @@ exports[`Renderer:table combineNum 1`] = `
                         </td>
                         <td
                           class=""
-                          rowspan="3"
                         >
                           <span
                             class="cxd-PlainField"
@@ -3231,6 +3291,33 @@ exports[`Renderer:table combineNum 1`] = `
                           <span
                             class="cxd-PlainField"
                           >
+                            Firefox 2.0
+                          </span>
+                        </td>
+                        <td
+                          class=""
+                        >
+                          <span
+                            class="cxd-PlainField"
+                          >
+                            Win 98+ / OSX.2+
+                          </span>
+                        </td>
+                        <td
+                          class=""
+                        >
+                          <span
+                            class="cxd-PlainField"
+                          >
+                            5
+                          </span>
+                        </td>
+                        <td
+                          class=""
+                        >
+                          <span
+                            class="cxd-PlainField"
+                          >
                             C
                           </span>
                         </td>
@@ -3240,6 +3327,33 @@ exports[`Renderer:table combineNum 1`] = `
                         data-id="10"
                         data-index="9"
                       >
+                        <td
+                          class=""
+                        >
+                          <span
+                            class="cxd-PlainField"
+                          >
+                            Firefox 2.0
+                          </span>
+                        </td>
+                        <td
+                          class=""
+                        >
+                          <span
+                            class="cxd-PlainField"
+                          >
+                            Win 98+ / OSX.2+
+                          </span>
+                        </td>
+                        <td
+                          class=""
+                        >
+                          <span
+                            class="cxd-PlainField"
+                          >
+                            5
+                          </span>
+                        </td>
                         <td
                           class=""
                         >
@@ -3440,6 +3554,10 @@ exports[`Renderer:table combineNum 1`] = `
                   </table>
                 </div>
               </div>
+              <div
+                class="cxd-Table-fixedTop-shadow"
+                style=""
+              />
             </div>
           </div>
         </div>
@@ -4401,6 +4519,10 @@ exports[`Renderer:table groupName-default 1`] = `
                   </table>
                 </div>
               </div>
+              <div
+                class="cxd-Table-fixedTop-shadow"
+                style=""
+              />
             </div>
           </div>
         </div>
@@ -4477,43 +4599,67 @@ exports[`Renderer:table groupName-middleNoGroupName 1`] = `
                     <thead>
                       <tr>
                         <th
+                          class=""
                           colspan="1"
                           data-index="3"
                           rowspan="1"
                         >
-                          <span
-                            class="cxd-TplField"
+                          <div
+                            class="cxd-TableCell--title"
                           >
-                            <span>
-                              分组1
+                            <span
+                              class="cxd-TplField"
+                            >
+                              <span>
+                                Engine
+                              </span>
                             </span>
-                          </span>
+                          </div>
+                          <div
+                            class="cxd-Table-content-colDragLine"
+                          />
                         </th>
                         <th
+                          class=""
                           colspan="1"
                           data-index="4"
                           rowspan="2"
                         >
-                          <span
-                            class="cxd-TplField"
+                          <div
+                            class="cxd-TableCell--title"
                           >
-                            <span>
-                              Grade
+                            <span
+                              class="cxd-TplField"
+                            >
+                              <span>
+                                Grade
+                              </span>
                             </span>
-                          </span>
+                          </div>
+                          <div
+                            class="cxd-Table-content-colDragLine"
+                          />
                         </th>
                         <th
+                          class=""
                           colspan="1"
                           data-index="5"
                           rowspan="2"
                         >
-                          <span
-                            class="cxd-TplField"
+                          <div
+                            class="cxd-TableCell--title"
                           >
-                            <span>
-                              Version
+                            <span
+                              class="cxd-TplField"
+                            >
+                              <span>
+                                Version
+                              </span>
                             </span>
-                          </span>
+                          </div>
+                          <div
+                            class="cxd-Table-content-colDragLine"
+                          />
                         </th>
                         <th
                           colspan="2"
@@ -5338,6 +5484,10 @@ exports[`Renderer:table groupName-middleNoGroupName 1`] = `
                   </table>
                 </div>
               </div>
+              <div
+                class="cxd-Table-fixedTop-shadow"
+                style=""
+              />
             </div>
           </div>
         </div>
@@ -5414,43 +5564,67 @@ exports[`Renderer:table groupName-startNoGroupName 1`] = `
                     <thead>
                       <tr>
                         <th
+                          class=""
                           colspan="1"
                           data-index="3"
                           rowspan="2"
                         >
-                          <span
-                            class="cxd-TplField"
+                          <div
+                            class="cxd-TableCell--title"
                           >
-                            <span>
-                              Engine
+                            <span
+                              class="cxd-TplField"
+                            >
+                              <span>
+                                Engine
+                              </span>
                             </span>
-                          </span>
+                          </div>
+                          <div
+                            class="cxd-Table-content-colDragLine"
+                          />
                         </th>
                         <th
+                          class=""
                           colspan="1"
                           data-index="4"
                           rowspan="2"
                         >
-                          <span
-                            class="cxd-TplField"
+                          <div
+                            class="cxd-TableCell--title"
                           >
-                            <span>
-                              Grade
+                            <span
+                              class="cxd-TplField"
+                            >
+                              <span>
+                                Grade
+                              </span>
                             </span>
-                          </span>
+                          </div>
+                          <div
+                            class="cxd-Table-content-colDragLine"
+                          />
                         </th>
                         <th
+                          class=""
                           colspan="1"
                           data-index="5"
                           rowspan="2"
                         >
-                          <span
-                            class="cxd-TplField"
+                          <div
+                            class="cxd-TableCell--title"
                           >
-                            <span>
-                              Version
+                            <span
+                              class="cxd-TplField"
+                            >
+                              <span>
+                                Version
+                              </span>
                             </span>
-                          </span>
+                          </div>
+                          <div
+                            class="cxd-Table-content-colDragLine"
+                          />
                         </th>
                         <th
                           colspan="2"
@@ -6236,6 +6410,10 @@ exports[`Renderer:table groupName-startNoGroupName 1`] = `
                   </table>
                 </div>
               </div>
+              <div
+                class="cxd-Table-fixedTop-shadow"
+                style=""
+              />
             </div>
           </div>
         </div>
@@ -7197,6 +7375,10 @@ exports[`Renderer:table groupName-withTpl 1`] = `
                   </table>
                 </div>
               </div>
+              <div
+                class="cxd-Table-fixedTop-shadow"
+                style=""
+              />
             </div>
           </div>
         </div>
@@ -7866,6 +8048,10 @@ exports[`Renderer:table isHead fixed 1`] = `
         </table>
       </div>
     </div>
+    <div
+      class="cxd-Table-fixedTop-shadow"
+      style=""
+    />
   </div>
 </div>
 `;
@@ -8192,8 +8378,8 @@ exports[`Renderer:table list 1`] = `
                   class="cxd-StatusField cxd-StatusField--1"
                 >
                   <icon-mock
-                    classname="cxd-Status-icon icon icon icon-success"
-                    icon="success"
+                    classname="cxd-Status-icon icon icon icon-check-circle"
+                    icon="check-circle"
                   />
                 </span>
               </td>
@@ -8430,8 +8616,8 @@ exports[`Renderer:table list 1`] = `
                   class="cxd-StatusField cxd-StatusField--1"
                 >
                   <icon-mock
-                    classname="cxd-Status-icon icon icon icon-success"
-                    icon="success"
+                    classname="cxd-Status-icon icon icon icon-check-circle"
+                    icon="check-circle"
                   />
                 </span>
               </td>
