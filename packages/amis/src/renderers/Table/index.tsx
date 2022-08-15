@@ -165,6 +165,11 @@ export type TableColumnObject = {
    * 是否唯一, 只有在 inputTable 里面才有用
    */
   unique?: boolean;
+
+  /**
+   * 表格列单元格是否可以获取父级数据域值，默认为true，该配置对当前列内单元格生效
+   */
+  canAccessSuperData?: boolean;
 };
 
 export type TableColumnWithType = SchemaObject & TableColumnObject;
@@ -293,6 +298,11 @@ export interface TableSchema extends BaseSchema {
    * 开启查询区域，会根据列元素的searchable属性值，自动生成查询条件表单
    */
   autoGenerateFilter?: boolean;
+
+  /**
+   * 表格是否可以获取父级数据域值，默认为false
+   */
+  canAccessSuperData?: boolean;
 }
 
 export interface TableProps extends RendererProps {
@@ -362,6 +372,7 @@ export interface TableProps extends RendererProps {
   reUseRow?: boolean;
   itemBadge?: BadgeObject;
   loading?: boolean;
+  autoFillHeight?: boolean;
 }
 
 export type ExportExcelToolbar = SchemaNode & {
@@ -606,25 +617,24 @@ export default class Table extends React.Component<TableProps, object> {
   }
 
   componentDidMount() {
-    const {autoFillHeight, classPrefix: ns} = this.props;
     const currentNode = findDOMNode(this) as HTMLElement;
+    // 获取小于所有子元素高度之和的父元素
     let parent: HTMLElement | Window | null = getScrollParent(
       currentNode,
       parent => {
-        const parentStyle = getComputedStyle(parent);
-        const currentStyle = getComputedStyle(currentNode);
-
-        const parentHeight =
-          parseInt(parentStyle.getPropertyValue('height')) -
-          parseInt(parentStyle.getPropertyValue('padding-top')) -
-          parseInt(parentStyle.getPropertyValue('padding-bottom'));
-        const currentHeight =
-          parseInt(currentStyle.getPropertyValue('height')) +
-          parseInt(currentStyle.getPropertyValue('margin-bottom')) +
-          parseInt(currentStyle.getPropertyValue('margin-top'));
-
-        // 具备 overflow-*:auto 的父元素的高度小于当前元素
-        return parentHeight > 0 && parentHeight < currentHeight;
+        if (parent.getAttribute('role') === 'dialog') {
+          /**
+           *
+           * * 兼容在 Dialog 中的场景,
+           * ! 有时 dialog 内容并没有撑出滚动条，这里需要做一下特殊处理
+           * TODO 有没有一种更好的方式来判断
+           */
+          return true;
+        }
+        // * 具备 overflow-*:auto 的父元素的高度小于当前元素
+        return (
+          parent.offsetHeight > 0 && parent.offsetHeight < parent.scrollHeight
+        );
       }
     );
 
@@ -642,11 +652,6 @@ export default class Table extends React.Component<TableProps, object> {
 
     this.affixDetect();
     parent.addEventListener('scroll', this.affixDetect);
-    if (autoFillHeight) {
-      document
-        .querySelector<HTMLElement>(`.${ns}Table-content`)!
-        .addEventListener('scroll', this.affixDetect);
-    }
     window.addEventListener('resize', this.affixDetect);
     this.updateAutoFillHeight();
     window.addEventListener('resize', this.updateAutoFillHeight);
@@ -821,15 +826,10 @@ export default class Table extends React.Component<TableProps, object> {
   }
 
   componentWillUnmount() {
-    const {formItem, autoFillHeight, classPrefix: ns} = this.props;
+    const {formItem} = this.props;
 
     const parent = this.parentNode;
     parent && parent.removeEventListener('scroll', this.affixDetect);
-    if (autoFillHeight) {
-      document
-        .querySelector<HTMLElement>(`.${ns}Table-content`)!
-        .addEventListener('scroll', this.affixDetect);
-    }
     window.removeEventListener('resize', this.affixDetect);
     window.removeEventListener('resize', this.updateAutoFillHeight);
     (this.updateTableInfoLazy as any).cancel();
@@ -1070,81 +1070,44 @@ export default class Table extends React.Component<TableProps, object> {
 
     return store.selectedRows.map(item => item.data);
   }
-  /**
-   * 滚动重新定位Table-fixedTop
-   */
-  affixDetect() {
-    const {
-      affixHeader,
-      classPrefix: ns,
-      affixOffsetTop,
-      env,
-      autoFillHeight
-    } = this.props;
 
-    if (!(affixHeader || autoFillHeight) || !this.table) {
-      // if (!this.props.affixHeader || !this.table || this.props.autoFillHeight) {
+  affixDetect() {
+    if (!this.props.affixHeader || !this.table || this.props.autoFillHeight) {
       return;
     }
 
+    const ns = this.props.classPrefix;
     const dom = findDOMNode(this) as HTMLElement;
+    const clip = (this.table as HTMLElement).getBoundingClientRect();
+    const offsetY =
+      this.props.affixOffsetTop ?? this.props.env.affixOffsetTop ?? 0;
+    const headingHeight =
+      dom.querySelector(`.${ns}Table-heading`)?.getBoundingClientRect()
+        .height || 0;
     const headerHeight =
       dom.querySelector(`.${ns}Table-headToolbar`)?.getBoundingClientRect()
         .height || 0;
+
+    const affixed =
+      clip.top - headerHeight - headingHeight < offsetY &&
+      clip.top + clip.height - 40 > offsetY;
     const affixedDom = dom.querySelector(`.${ns}Table-fixedTop`) as HTMLElement;
+    const affixedShadowDom = dom.querySelector(
+      `.${ns}Table-fixedTop-shadow`
+    ) as HTMLElement;
     const affixedDomHeight =
       getComputedStyle(affixedDom).getPropertyValue('height');
 
-    if (autoFillHeight) {
-      //! 解决 sticky 不兼容的问题
-      const tableContentDom = document.querySelector<HTMLElement>(
-        `.${ns}Table-content`
-      )!;
-      const clip = tableContentDom.getBoundingClientRect();
+    affixedDom.style.cssText += `top: ${offsetY}px;width: ${
+      (this.table.parentNode as HTMLElement).offsetWidth
+    }px`;
+    affixedShadowDom.style.cssText += `top: ${affixedDomHeight};width: ${
+      (this.table.parentNode as HTMLElement).offsetWidth
+    }px`;
 
-      const tableHeaderClip = affixedDom
-        .querySelector(`.${ns}Table-wrapper`)!
-        .getBoundingClientRect();
-      const offsetHeight =
-        affixedDom.getBoundingClientRect().height - tableHeaderClip.height;
-      const offsetY = clip.top - offsetHeight;
-
-      affixedDom.style.cssText += `top: ${offsetY}px;width: ${clip.width}px`;
-
-      affixedDom.classList.add('in');
-    } else {
-      // 配置了 affixHeader
-      const clip = (this.table as HTMLElement).getBoundingClientRect();
-      const offsetY = affixOffsetTop ?? env.affixOffsetTop ?? 0;
-      const headingHeight =
-        dom.querySelector(`.${ns}Table-heading`)?.getBoundingClientRect()
-          .height || 0;
-      const affixedShadowDom = dom.querySelector(
-        `.${ns}Table-fixedTop-shadow`
-      ) as HTMLElement;
-      const affixed =
-        clip.top - headerHeight - headingHeight < offsetY &&
-        clip.top + clip.height - 40 > offsetY;
-
-      affixedDom.style.cssText += `top: ${offsetY}px;width: ${
-        (this.table.parentNode as HTMLElement).offsetWidth
-      }px`;
-      affixedShadowDom.style.cssText += `top: ${affixedDomHeight};width: ${
-        (this.table.parentNode as HTMLElement).offsetWidth
-      }px`;
-
-      const preStatus = affixedDom.classList.contains('in');
-
-      affixed
-        ? affixedDom.classList.add('in')
-        : affixedDom.classList.remove('in');
-
-      // 出现affixHeader时重新计算列表宽度
-      if (!preStatus && affixed) {
-        this.updateTableInfoLazy();
-      }
-    }
-
+    affixed
+      ? affixedDom.classList.add('in')
+      : affixedDom.classList.remove('in');
     // store.markHeaderAffix(clip.top < offsetY && (clip.top + clip.height - 40) > offsetY);
   }
 
@@ -2139,6 +2102,8 @@ export default class Table extends React.Component<TableProps, object> {
 
     const subProps: any = {
       ...props,
+      // 操作列不下发loading，否则会导致操作栏里面的所有按钮都出现loading
+      loading: column.type === 'operation' ? false : props.loading,
       btnDisabled: store.dragging,
       data: item.locals,
       value: column.name

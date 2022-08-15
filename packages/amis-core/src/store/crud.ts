@@ -134,6 +134,7 @@ export const CRUDStore = ServiceStore.named('CRUDStore')
         loadDataMode?: boolean;
         syncResponse2Query?: boolean;
         columns?: Array<any>;
+        isTableV2?: Boolean; // 是否是 CRUD2
       }
     ) => Promise<any> = flow(function* getInitData(
       api: Api,
@@ -336,7 +337,7 @@ export const CRUDStore = ServiceStore.named('CRUDStore')
 
           if (Array.isArray(columns)) {
             self.columns = columns.concat();
-          } else {
+          } else if (rest.isTableV2) {
             self.columns = options.columns;
           }
 
@@ -360,7 +361,9 @@ export const CRUDStore = ServiceStore.named('CRUDStore')
             self.hasNext = !!hasNext;
           }
 
-          self.updateMessage(json.msg ?? options.successMessage);
+          self.updateMessage(
+            json.msg ?? options.successMessage ?? json.defaultMsg
+          );
 
           // 配置了获取成功提示后提示，默认是空不会提示。
           options &&
@@ -445,7 +448,9 @@ export const CRUDStore = ServiceStore.named('CRUDStore')
           );
           throw new ServerError(self.msg);
         } else {
-          self.updateMessage(json.msg ?? options.successMessage);
+          self.updateMessage(
+            json.msg ?? options.successMessage ?? json.defaultMsg
+          );
           self.msg &&
             getEnv(self).notify(
               'success',
@@ -546,7 +551,21 @@ export const CRUDStore = ServiceStore.named('CRUDStore')
       }
 
       import('papaparse').then((papaparse: any) => {
-        const csvText = papaparse.unparse(items);
+        // 将数据里的对象转成 json 字符串，不然输出的 csv 没法显示
+        const csvData = [];
+        for (const row of items) {
+          const rowData = {} as {[key: string]: any};
+          for (const key in row) {
+            const value = row[key];
+            if (typeof value === 'object') {
+              rowData[key] = JSON.stringify(value);
+            } else {
+              rowData[key] = value;
+            }
+          }
+          csvData.push(rowData);
+        }
+        const csvText = papaparse.unparse(csvData);
         if (csvText) {
           const blob = new Blob(
             // 加上 BOM 这样 Excel 打开的时候就不会乱码
