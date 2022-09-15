@@ -128,13 +128,13 @@ register('en-US', {
   'File.invalidType': '{{files}} does not match type `{{accept}}`',
   'File.maxLength': 'The maximum limit is {{maxLength}}',
   'File.maxSize':
-    '{{filename}} you selected exceeds the maximum limit of {{maxsize}} (in bytes)',
+    '{{filename}} you selected exceeds the maximum limit of {{maxSize}}',
   'File.pause': 'Pause uplaod',
   'File.repick': 'Repick',
   'File.result':
     'Successfully uploaded {{uploaded}} files, failed to upload {{failed}} files',
   'File.retry': 'Retry',
-  'File.sizeLimit': 'The maximum file size is {{maxSize}} B',
+  'File.sizeLimit': 'The maximum file size is {{maxSize}}',
   'File.start': 'Start upload',
   'File.upload': 'Upload',
   'Image.upload': 'Upload image',
@@ -271,6 +271,30 @@ register('en-US', {
   'validate.minimum': 'The input value is lower than the minimum value of $1',
   'validate.minLength': 'Please enter more, at least $1 characters.',
   'validate.notEmptyString': 'Please do not enter all blank characters',
+  'validate.isDateTimeSame':
+    'The current date value is invalid, please enter the same date value as $1',
+  'validate.isDateTimeBefore':
+    'The current date value is invalid, please enter a date value before $1',
+  'validate.isDateTimeAfter':
+    'The current date value is invalid, please enter a date value after $1',
+  'validate.isDateTimeSameOrBefore':
+    'The current date value is invalid, please enter a date value that is the same as or before $1',
+  'validate.isDateTimeSameOrAfter':
+    'The current date value is invalid, please enter a date value that is the same as or after $1',
+  'validate.isDateTimeBetween':
+    'The current date value is invalid, please enter a date value between $1 and $2',
+  'validate.isTimeSame':
+    'The current time value is invalid, please enter the same time value as $1',
+  'validate.isTimeBefore':
+    'The current time value is invalid, please enter a time value before $1',
+  'validate.isTimeAfter':
+    'The current time value is invalid, please enter a time value after $1',
+  'validate.isTimeSameOrBefore':
+    'The current time value is invalid, please enter a time value that is the same as or before $1',
+  'validate.isTimeSameOrAfter':
+    'The current time value is invalid, please enter a time value that is the same as or after $1',
+  'validate.isTimeBetween':
+    'The current time value is invalid, please enter a time value between $1 and $2',
   'validateFailed': 'Validate failed',
   'Wizard.configError': 'Config error',
   'Wizard.finish': 'Finish',
@@ -322,6 +346,8 @@ register('en-US', {
   'InputTable.uniqueError': 'Column `{{label}}` unique validate failed',
   'Timeline.collapseText': 'Unfold',
   'Timeline.expandText': 'Fold',
+  'collapse': 'Collapse',
+  'expand': 'Expand',
   'FormulaEditor.btnLabel': 'Formula Edit',
   'FormulaEditor.title': 'Formula Editor',
   'FormulaEditor.variable': 'Variable',

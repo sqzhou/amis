@@ -1,13 +1,13 @@
 import React from 'react';
 import {findDOMNode} from 'react-dom';
-import {ScopedContext, IScopedContext} from 'amis-core';
+import {ScopedContext, IScopedContext, SchemaExpression} from 'amis-core';
 import {Renderer, RendererProps} from 'amis-core';
 import {SchemaNode, ActionObject, Schema} from 'amis-core';
 import forEach from 'lodash/forEach';
 import {evalExpression, filter} from 'amis-core';
 import {BadgeObject, Checkbox, Spinner} from 'amis-ui';
 import {Button} from 'amis-ui';
-import {TableStore, ITableStore} from 'amis-core';
+import {TableStore, ITableStore, padArr} from 'amis-core';
 import {
   anyChanged,
   getScrollParent,
@@ -175,6 +175,10 @@ export type TableColumnObject = {
 export type TableColumnWithType = SchemaObject & TableColumnObject;
 export type TableColumn = TableColumnWithType | TableColumnObject;
 
+interface AutoFillHeightObject {
+  height: number;
+}
+
 /**
  * Table 表格渲染器。
  * 文档：https://baidu.gitee.io/amis/docs/components/table
@@ -262,7 +266,7 @@ export interface TableSchema extends BaseSchema {
   /**
    * 合并单元格配置，配置数字表示从左到右的多少列自动合并单元格。
    */
-  combineNum?: number;
+  combineNum?: number | SchemaExpression;
 
   /**
    * 合并单元格配置，配置从第几列开始合并。
@@ -303,6 +307,11 @@ export interface TableSchema extends BaseSchema {
    * 表格是否可以获取父级数据域值，默认为false
    */
   canAccessSuperData?: boolean;
+
+  /**
+   * 表格自动计算高度
+   */
+  autoFillHeight?: boolean | AutoFillHeightObject;
 }
 
 export interface TableProps extends RendererProps {
@@ -329,7 +338,7 @@ export interface TableProps extends RendererProps {
   columnsTogglable?: boolean | 'auto';
   affixHeader?: boolean;
   affixColumns?: boolean;
-  combineNum?: number | string;
+  combineNum?: number | SchemaExpression;
   combineFromIndex?: number;
   footable?:
     | boolean
@@ -357,7 +366,10 @@ export interface TableProps extends RendererProps {
     rowIndexes: Array<string> | string,
     unModifiedItems?: Array<object>,
     rowOrigins?: Array<object> | object,
-    resetOnFailed?: boolean
+    options?: {
+      resetOnFailed?: boolean;
+      reload?: string;
+    }
   ) => void;
   onSaveOrder?: (moved: Array<object>, items: Array<object>) => void;
   onQuery: (values: object) => void;
@@ -372,7 +384,7 @@ export interface TableProps extends RendererProps {
   reUseRow?: boolean;
   itemBadge?: BadgeObject;
   loading?: boolean;
-  autoFillHeight?: boolean;
+  autoFillHeight?: boolean | AutoFillHeightObject;
 }
 
 export type ExportExcelToolbar = SchemaNode & {
@@ -618,25 +630,7 @@ export default class Table extends React.Component<TableProps, object> {
 
   componentDidMount() {
     const currentNode = findDOMNode(this) as HTMLElement;
-    // 获取小于所有子元素高度之和的父元素
-    let parent: HTMLElement | Window | null = getScrollParent(
-      currentNode,
-      parent => {
-        if (parent.getAttribute('role') === 'dialog') {
-          /**
-           *
-           * * 兼容在 Dialog 中的场景,
-           * ! 有时 dialog 内容并没有撑出滚动条，这里需要做一下特殊处理
-           * TODO 有没有一种更好的方式来判断
-           */
-          return true;
-        }
-        // * 具备 overflow-*:auto 的父元素的高度小于当前元素
-        return (
-          parent.offsetHeight > 0 && parent.offsetHeight < parent.scrollHeight
-        );
-      }
-    );
+    let parent: HTMLElement | Window | null = getScrollParent(currentNode);
 
     if (!parent || parent === document.body) {
       parent = window;
@@ -728,13 +722,19 @@ export default class Table extends React.Component<TableProps, object> {
       parentNode = parentNode.parentElement;
     }
 
-    const tableContentHeight = `${
-      viewportHeight -
-      tableContentTop -
-      tableContentWrapMarginButtom -
-      footToolbarHeight -
-      allParentPaddingButtom
-    }px`;
+    const height = isObject(autoFillHeight)
+      ? (autoFillHeight as AutoFillHeightObject).height
+      : 0;
+
+    const tableContentHeight = height
+      ? `${height}px`
+      : `${
+          viewportHeight -
+          tableContentTop -
+          tableContentWrapMarginButtom -
+          footToolbarHeight -
+          allParentPaddingButtom
+        }px`;
 
     tableContent.style.height = tableContentHeight;
     /**autoFillHeight开启后固定列会溢出Table高度，需要同步一下 */
@@ -918,7 +918,10 @@ export default class Table extends React.Component<TableProps, object> {
     values: object,
     saveImmediately?: boolean | any,
     savePristine?: boolean,
-    resetOnFailed?: boolean
+    options?: {
+      resetOnFailed?: boolean;
+      reload?: string;
+    }
   ) {
     if (!isAlive(item)) {
       return;
@@ -948,7 +951,8 @@ export default class Table extends React.Component<TableProps, object> {
         null,
         {
           actionType: 'ajax',
-          api: saveImmediately.api
+          api: saveImmediately.api,
+          reload: options?.reload
         },
         values
       );
@@ -965,7 +969,7 @@ export default class Table extends React.Component<TableProps, object> {
       item.path,
       undefined,
       item.pristine,
-      resetOnFailed
+      options
     );
   }
 
@@ -1138,7 +1142,7 @@ export default class Table extends React.Component<TableProps, object> {
       [propName: string]: number;
     } = (this.widths2 = {});
     let heights: {
-      [propName: string]: number;
+      [propName: string]: number | string;
     } = (this.heights = {});
 
     heights.header = table
@@ -1166,8 +1170,13 @@ export default class Table extends React.Component<TableProps, object> {
 
     forEach(
       table.querySelectorAll('tbody>tr>*:last-child'),
+      /**
+       * ! 弹窗中的特殊说明
+       * ! 在弹窗中，modal 有一个 scale 的动画，导致 getBoundingClientRect 获取的高度不准确
+       * ! width 准确是因为 table-layout: auto 导致
+       */
       (item: HTMLElement, index: number) =>
-        (heights[index] = item.getBoundingClientRect().height)
+        (heights[index] = getComputedStyle(item).height)
     );
 
     // 让 react 去更新非常慢，还是手动更新吧。
@@ -1206,7 +1215,7 @@ export default class Table extends React.Component<TableProps, object> {
         forEach(
           table.querySelectorAll('tbody>tr'),
           (item: HTMLElement, index) => {
-            item.style.cssText += `height: ${heights[index]}px`;
+            item.style.cssText += `height: ${heights[index]}`;
           }
         );
 
@@ -1621,30 +1630,48 @@ export default class Table extends React.Component<TableProps, object> {
       return null;
     }
 
-    const groupedSearchableColumns: Array<Record<string, any>> = [
-      {body: [], md: 4},
-      {body: [], md: 4},
-      {body: [], md: 4}
-    ];
+    const body: Array<any> = [];
 
-    activedSearchableColumns.forEach((column, index) => {
-      groupedSearchableColumns[index % 3].body.push({
-        ...(column.searchable === true
-          ? {
-              type: 'input-text',
-              name: column.name,
-              label: column.label
-            }
-          : {
-              type: 'input-text',
-              name: column.name,
-              ...column.searchable
-            }),
-        name: column.searchable?.name ?? column.name,
-        label: column.searchable?.label ?? column.label,
-        mode: 'horizontal'
+    padArr(activedSearchableColumns, 3, true).forEach(group => {
+      const children: Array<any> = [];
+
+      group.forEach(column => {
+        children.push(
+          column
+            ? {
+                ...(column.searchable === true
+                  ? {
+                      type: 'input-text',
+                      name: column.name,
+                      label: column.label
+                    }
+                  : {
+                      type: 'input-text',
+                      name: column.name,
+                      ...column.searchable
+                    }),
+                name: column.searchable?.name ?? column.name,
+                label: column.searchable?.label ?? column.label
+              }
+            : {
+                type: 'tpl',
+                tpl: ''
+              }
+        );
+      });
+
+      body.push({
+        type: 'group',
+        body: children
       });
     });
+
+    let showExpander = body.length > 1;
+
+    // todo 以后做动画
+    if (!store.searchFormExpanded) {
+      body.splice(1, body.length - 1);
+    }
 
     return render(
       'searchable-form',
@@ -1652,14 +1679,9 @@ export default class Table extends React.Component<TableProps, object> {
         type: 'form',
         api: null,
         title: '',
-        mode: 'normal',
+        mode: 'horizontal',
         submitText: __('search'),
-        body: [
-          {
-            type: 'grid',
-            columns: groupedSearchableColumns
-          }
-        ],
+        body: body,
         actions: [
           {
             type: 'dropdown-button',
@@ -1685,6 +1707,7 @@ export default class Table extends React.Component<TableProps, object> {
                 },
                 onChange: (value: boolean) => {
                   column.setEnableSearch(value);
+                  store.setSearchFormExpanded(true);
                 }
               };
             })
@@ -1699,8 +1722,27 @@ export default class Table extends React.Component<TableProps, object> {
             type: 'reset',
             label: __('reset'),
             className: 'w-18'
-          }
-        ]
+          },
+
+          showExpander
+            ? {
+                children: () => (
+                  <a
+                    className={cx(
+                      'Table-SFToggler',
+                      store.searchFormExpanded ? 'is-expanded' : ''
+                    )}
+                    onClick={store.toggleSearchFormExpanded}
+                  >
+                    {__(store.searchFormExpanded ? 'collapse' : 'expand')}
+                    <span className={cx('Table-SFToggler-arrow')}>
+                      <Icon icon="right-arrow-bold" className="icon" />
+                    </span>
+                  </a>
+                )
+              }
+            : null
+        ].filter(item => item)
       },
       {
         key: 'searchable-form',

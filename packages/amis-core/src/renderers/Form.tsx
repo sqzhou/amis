@@ -172,6 +172,11 @@ export interface FormSchemaBase {
   persistData?: string;
 
   /**
+   * 开启本地缓存后限制保存哪些 key
+   */
+  persistDataKeys?: string[];
+
+  /**
    * 提交成功后清空本地缓存
    */
   clearPersistDataAfterSubmit?: boolean;
@@ -870,7 +875,7 @@ export default class Form extends React.Component<FormProps, object> {
     submit: boolean,
     changePristine = false
   ) {
-    const {store, formLazyChange} = this.props;
+    const {store, formLazyChange, persistDataKeys} = this.props;
     if (typeof name !== 'string') {
       return;
     }
@@ -882,7 +887,7 @@ export default class Form extends React.Component<FormProps, object> {
     }
 
     if (store.persistData && store.inited) {
-      store.setLocalPersistData();
+      store.setLocalPersistData(persistDataKeys);
     }
   }
   formItemDispatchEvent(dispatchEvent: any) {
@@ -942,20 +947,24 @@ export default class Form extends React.Component<FormProps, object> {
   }
 
   handleFormSubmit(e: React.UIEvent<any>) {
-    const {preventEnterSubmit} = this.props;
+    const {preventEnterSubmit, onActionSensor} = this.props;
 
     e.preventDefault();
     if (preventEnterSubmit) {
       return false;
     }
 
-    return this.handleAction(
+    const sensor: any = this.handleAction(
       e,
       {
         type: 'submit'
       },
       this.props.store.data
     );
+
+    // 让外层可以监控这个动作执行结果
+    onActionSensor?.(sensor);
+    return sensor;
   }
 
   handleReset(action: any) {

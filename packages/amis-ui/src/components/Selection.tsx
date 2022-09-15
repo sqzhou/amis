@@ -49,7 +49,12 @@ export class BaseSelection<
   S = any
 > extends React.Component<T, S> {
   static itemRender(option: Option, states: ItemRenderStates) {
-    return <span>{option.label}</span>;
+    return (
+      <span>
+        {option.label}
+        {option.tip || ''}
+      </span>
+    );
   }
 
   static defaultProps = {
@@ -152,7 +157,9 @@ export class BaseSelection<
     } else if (intersectOptions.length < availableOptions.length) {
       valueArray = Array.from(new Set([...value, ...availableOptions]));
     } else {
-      valueArray = value.filter(item => !availableOptions.includes(item));
+      valueArray = value.filter(
+        (item: Option) => !availableOptions.includes(item)
+      );
     }
 
     let newValue: string | Array<Option> = option2value

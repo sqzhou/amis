@@ -1,9 +1,14 @@
 import React, {Suspense} from 'react';
-import {FormItem, FormControlProps, FormBaseControl} from 'amis-core';
+import {
+  FormItem,
+  FormControlProps,
+  FormBaseControl,
+  prettyBytes
+} from 'amis-core';
 // import 'cropperjs/dist/cropper.css';
 const Cropper = React.lazy(() => import('react-cropper'));
 import DropZone from 'react-dropzone';
-import {FileRejection} from 'react-dropzone';
+import {FileRejection, DropEvent} from 'react-dropzone';
 import 'blueimp-canvastoblob';
 import find from 'lodash/find';
 import {Payload, ActionObject} from 'amis-core';
@@ -245,12 +250,12 @@ export interface ImageControlSchema extends FormBaseControlSchema {
   /**
    * 初始化时是否打开裁剪模式
    */
-   initCrop?: boolean;
+  initCrop?: boolean;
 
-   /**
-    * 图片上传完毕是否进入裁剪模式
-    */
-    dropCrop?: boolean;
+  /**
+   * 图片上传完毕是否进入裁剪模式
+   */
+  dropCrop?: boolean;
 
   /**
    * 默认占位图图片地址
@@ -341,20 +346,6 @@ export default class ImageControl extends React.Component<
     dropCrop: true
   };
 
-  static formatFileSize(
-    size: number | string,
-    units = [' B', ' KB', ' M', ' G']
-  ) {
-    size = parseInt(size as string, 10) || 0;
-
-    while (size > 1024 && units.length > 1) {
-      size /= 1024;
-      units.shift();
-    }
-
-    return size.toFixed(2) + units[0];
-  }
-
   static valueToFile(
     value: string | object,
     props?: ImageProps
@@ -406,6 +397,8 @@ export default class ImageControl extends React.Component<
   emitValue: any;
   unmounted = false;
   initAutoFill: boolean;
+  // 文件重新上传的位置标记，用以定位替换
+  reuploadIndex: undefined | number = undefined;
 
   constructor(props: ImageProps) {
     super(props);
@@ -456,6 +449,7 @@ export default class ImageControl extends React.Component<
     this.handleSelect = this.handleSelect.bind(this);
     this.handlePaste = this.handlePaste.bind(this);
     this.syncAutoFill = this.syncAutoFill.bind(this);
+    this.handleReSelect = this.handleReSelect.bind(this);
   }
 
   componentDidMount() {
@@ -466,7 +460,7 @@ export default class ImageControl extends React.Component<
         : addHook(this.syncAutoFill, 'init');
     }
 
-    if (this.props.initCrop && this.files.length){
+    if (this.props.initCrop && this.files.length) {
       this.editImage(0);
     }
   }
@@ -865,6 +859,8 @@ export default class ImageControl extends React.Component<
   }
 
   handleSelect() {
+    // 清除标记，以免影响正常上传
+    this.reuploadIndex = undefined;
     this.dropzone.current && this.dropzone.current.open();
   }
 
@@ -887,7 +883,7 @@ export default class ImageControl extends React.Component<
     );
   }
 
-  handleDrop(files: Array<FileX>) {
+  handleDrop(files: Array<FileX>, e?: any, event?: DropEvent) {
     const {multiple, crop, dropCrop} = this.props;
 
     if (crop && !multiple && dropCrop) {
@@ -902,6 +898,10 @@ export default class ImageControl extends React.Component<
       });
     }
 
+    // 拖拽的情况，没有比他更靠前的方法，只能在这里判断
+    if (event && event.type === 'drop' && this.reuploadIndex !== undefined) {
+      this.reuploadIndex = undefined;
+    }
     this.addFiles(files);
   }
 
@@ -926,6 +926,8 @@ export default class ImageControl extends React.Component<
       files.push(blob);
     });
 
+    // 清除标记，以免影响正常上传
+    this.reuploadIndex = undefined;
     this.handleDrop(files);
   }
 
@@ -986,8 +988,8 @@ export default class ImageControl extends React.Component<
         this.props.env.alert(
           __('File.maxSize', {
             filename: file.name,
-            actualSize: ImageControl.formatFileSize(file.size),
-            maxSize: ImageControl.formatFileSize(maxSize)
+            actualSize: prettyBytes(file.size, 1024),
+            maxSize: prettyBytes(maxSize, 1024)
           })
         );
         return;
@@ -1005,10 +1007,21 @@ export default class ImageControl extends React.Component<
       return;
     }
 
+    let finalFiles: Array<FileValue | FileX> = [];
+    // 替换
+    if (this.reuploadIndex !== undefined) {
+      finalFiles = currentFiles.concat();
+      // 因为单个文件重新上传也能选择多个，都插到一起
+      finalFiles.splice(this.reuploadIndex, 1, ...inputFiles);
+      this.reuploadIndex = undefined;
+    } else {
+      finalFiles = currentFiles.concat(inputFiles);
+    }
+
     this.setState(
       {
         error: undefined,
-        files: (this.files = currentFiles.concat(inputFiles)),
+        files: (this.files = finalFiles),
         locked: true
       },
       () => {
@@ -1296,6 +1309,12 @@ export default class ImageControl extends React.Component<
     }
   }
 
+  // 重新上传
+  handleReSelect(index: number) {
+    this.reuploadIndex = index;
+    this.dropzone.current && this.dropzone.current.open();
+  }
+
   render() {
     const {
       className,
@@ -1535,9 +1554,9 @@ export default class ImageControl extends React.Component<
                                           </div>,
                                           file.info.len ? (
                                             <div key="size">
-                                              {ImageControl.formatFileSize(
+                                              {prettyBytes(
                                                 file.info.len
-                                              )}
+                                              , 1024)}
                                             </div>
                                           ) : null
                                         ]
@@ -1582,7 +1601,9 @@ export default class ImageControl extends React.Component<
                                         <a
                                           data-tooltip={__('Select.upload')}
                                           data-position="bottom"
-                                          onClick={this.handleSelect}
+                                          onClick={() =>
+                                            this.handleReSelect(key)
+                                          }
                                         >
                                           <Icon
                                             icon="upload"
