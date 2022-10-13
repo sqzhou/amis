@@ -7,6 +7,7 @@ const package = require('./packages/amis/package.json');
 const parserMarkdown = require('./scripts/md-parser');
 const convertSCSSIE11 = require('./scripts/scss-ie11');
 const parserCodeMarkdown = require('./scripts/code-md-parser');
+
 fis.set('project.ignore', [
   'public/**',
   'scripts/**',
@@ -15,8 +16,8 @@ fis.set('project.ignore', [
   '.*/**',
   'node_modules/**'
 ]);
-// 配置只编译哪些文件。
 
+// 配置只编译哪些文件
 const Resource = fis.require('postpackager-loader/lib/resource.js');
 const versionHash = fis.util.md5(package.version);
 
@@ -982,3 +983,5 @@ if (fis.project.currentMedia() === 'publish-sdk') {
     domain: null
   });
 }
+
+fis.config.set("project.watch.usePolling", true);
