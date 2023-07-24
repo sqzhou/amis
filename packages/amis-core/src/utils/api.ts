@@ -723,6 +723,19 @@ export function isApiOutdated(
     );
   }
 
+  const realPrevApi = buildApi(prevApi, prevData);
+  const realNextApi = buildApi(nextApi, nextData);
+
+  if (realPrevApi.body && realNextApi.body) {
+    if (
+      Object.keys(realNextApi?.body).some(
+        key => realNextApi.body?.[key] !== realPrevApi.body?.[key]
+      )
+    ) {
+      return true;
+    }
+  }
+
   const trackExpression = nextApi.trackExpression ?? nextApi.url;
   if (typeof trackExpression !== 'string' || !~trackExpression.indexOf('$')) {
     return false;
