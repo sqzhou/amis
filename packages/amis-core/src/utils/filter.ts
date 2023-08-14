@@ -120,8 +120,12 @@ extendsFilters({
     const date = moment(input, inputFormat);
     return date.isValid() ? date.toDate() : undefined;
   },
-  fromNow: (input: any, inputFormat = '') =>
-    moment(input, inputFormat).fromNow(),
+  fromNow: (input: any, inputFormat = '', locale?: 'zh-cn' | 'en' | 'de') => {
+    console.log('fromNow');
+    return locale
+      ? moment(input, inputFormat).locale(locale).fromNow()
+      : moment(input, inputFormat).fromNow();
+  },
   dateModify: (
     input: any,
     modifier: 'add' | 'subtract' | 'endOf' | 'startOf' = 'add',
